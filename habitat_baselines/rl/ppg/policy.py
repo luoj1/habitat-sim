@@ -90,6 +90,7 @@ class NetPolicy(nn.Module, Policy):
             )
 
         self.critic = CriticHead(self.net.output_size)
+        self.act_value = CriticHead(self.net.output_size)
 
     @property
     def should_load_agent_state(self):
@@ -153,11 +154,12 @@ class NetPolicy(nn.Module, Policy):
         )
         distribution = self.action_distribution(features)
         value = self.critic(features)
+        act_val = self.act_value(features)
 
         action_log_probs = distribution.log_probs(action)
         distribution_entropy = distribution.entropy()
 
-        return value, action_log_probs, distribution_entropy, rnn_hidden_states
+        return value, act_val, action_log_probs, distribution_entropy, rnn_hidden_states
 
     @property
     def policy_components(self):
@@ -189,7 +191,7 @@ class CriticHead(nn.Module):
         return self.fc(x)
 
 
-#@baseline_registry.register_policy
+@baseline_registry.register_policy
 class PointNavBaselinePolicy(NetPolicy):
     def __init__(
         self,
@@ -250,7 +252,8 @@ class PointNavBaselineNet(Net):
         hidden_size: int,
     ):
         super().__init__()
-
+        print("observation_space key", observation_space.spaces.keys())
+        print("IntegratedPointGoalGPSAndCompassSensor.cls_uuid",  IntegratedPointGoalGPSAndCompassSensor.cls_uuid)
         if (
             IntegratedPointGoalGPSAndCompassSensor.cls_uuid
             in observation_space.spaces
@@ -272,7 +275,14 @@ class PointNavBaselineNet(Net):
             self._n_input_goal = hidden_size
 
         self._hidden_size = hidden_size
-
+        '''
+                    n_input_goal = (
+                observation_space.spaces[
+                    IntegratedPointGoalGPSAndCompassSensor.cls_uuid
+                ].shape[0]
+                + 1
+            )
+            '''
         self.visual_encoder = SimpleCNN(observation_space, hidden_size)
 
         self.state_encoder = build_rnn_state_encoder(

@@ -46,14 +46,16 @@ from habitat_baselines.rl.ddppo.ddp_utils import (
     requeue_job,
     save_resume_state,
 )
+'''
 from habitat_baselines.rl.ddppo.policy import (  # noqa: F401.
     PointNavResNetPolicy,
 )
+'''
 from habitat_baselines.rl.hrl.hierarchical_policy import (  # noqa: F401.
     HierarchicalPolicy,
 )
-from habitat_baselines.rl.ppo import PPO
-from habitat_baselines.rl.ppo.policy import NetPolicy
+from habitat_baselines.rl.ppg import PPO
+from habitat_baselines.rl.ppg.policy import NetPolicy
 from habitat_baselines.utils.common import (
     batch_obs,
     generate_video,
@@ -63,12 +65,9 @@ from habitat_baselines.utils.common import (
 )
 
 
-#@baseline_registry.register_trainer(name="ddppo")
-#@baseline_registry.register_trainer(name="ppo")
+@baseline_registry.register_trainer(name="ppg")
 class PPOTrainer(BaseRLTrainer):
-    r"""Trainer class for PPO algorithm
-    Paper: https://arxiv.org/abs/1707.06347.
-    """
+
     supported_tasks = ["Nav-v0"]
 
     SHORT_ROLLOUT_THRESHOLD: float = 0.25

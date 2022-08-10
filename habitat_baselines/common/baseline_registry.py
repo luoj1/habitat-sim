@@ -71,10 +71,10 @@ class BaselineRegistry(Registry):
                 pass
 
         """
-        from habitat_baselines.rl.ppo.policy import Policy
+        #from habitat_baselines.rl.ppg.policy import Policy
 
         return cls._register_impl(
-            "policy", to_register, name, assert_type=Policy
+            "policy", to_register, name, assert_type=None#Policy
         )
 
     @classmethod
